@@ -90,7 +90,6 @@ class Quest():
         else:
             audio_link = audios[AUDIO_INDEX].a.get('href')  # Extract the choosen character's voice.
 
-            # audio_name = [i for i in audio_link.split('/') if i.endswith('.ogg')][0]
             audio_name = self.quest_name.replace(' ', '_') + '__' + ([i for i in audio_link.split('/') if i.endswith('.ogg')][0])
         
         # extract text

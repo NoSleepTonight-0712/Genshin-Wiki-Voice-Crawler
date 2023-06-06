@@ -3,9 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 from typing import List
 from urllib.parse import urljoin
+from utils.global_variables import BASE_URL
 
 URL = 'https://genshin-impact.fandom.com/wiki/Category:Quests_with_Voice-Overs'
-BASE_URL = 'https://genshin-impact.fandom.com/'
+
 
 def getVoiceOverWikiList() -> List[str]:
     content = requests.get(URL).content

@@ -7,3 +7,5 @@ QUEST_TYPE_CHARACTER = 6
 
 CHARACTER_AETHER = 0
 CHARACTER_LUMINE = 1
+
+BASE_URL = 'https://genshin-impact.fandom.com/'

@@ -3,13 +3,13 @@ from utils.voice_over_index import getVoiceOverWikiList
 from concurrent.futures import ThreadPoolExecutor, wait, as_completed
 from utils.analyze_difficulty import difficulty_analyze
 import sqlite3
+from utils.character_voice import getAllCharacterVoiceOverPage, getCharacterVoicesOnPage
 
 conn = sqlite3.connect("data/data.sqlite")
 cur = conn.cursor()
+pool = ThreadPoolExecutor(max_workers=8)
 
 wiki_list = getVoiceOverWikiList()
-
-pool = ThreadPoolExecutor(max_workers=4)
 
 def func(link):
     q = Quest(link)
@@ -55,4 +55,33 @@ for quest, dialogues in result:
         
     conn.commit()
 
-# 
+# insert into character voice.
+print('Start crawling character voices.')
+character_page_list = getAllCharacterVoiceOverPage()
+
+result = pool.map(getCharacterVoicesOnPage, character_page_list)
+result = list(result)
+print('Crawling finished. Start storing.')
+
+for r in result:
+    if r == None:
+        continue
+    character_name, character_page_url, voices = r
+    chapter_quest_name = f'Character_Voice_{character_name}'
+    cur.execute('insert into chapter (chapter_name, chapter_type_id) values (?, 6)', (chapter_quest_name, ))
+
+    conn.commit()
+
+    cur.execute('insert into quest (quest_name, chapter_id, quest_link) SELECT ?, chapter_id, ? FROM chapter WHERE chapter_name = ?;', (chapter_quest_name, character_page_url, f'{chapter_quest_name}'))
+
+    conn.commit()
+
+    cur.execute('SELECT quest_id from quest where quest_name = ?', (chapter_quest_name, ))
+    quest_id = cur.fetchone()[0]
+
+    for text, link, filename in voices:
+        cur.execute('insert into dialogue(dialogue_text, dialogue_quest_id, dialogue_audio_url, max_sentence_length, dialogue_audio_name) values (?, ?, ?, ?, ?)', (text, quest_id, link, difficulty_analyze(text), chapter_quest_name + filename))
+    
+    conn.commit()
+    print(f'finish {character_name}')
+

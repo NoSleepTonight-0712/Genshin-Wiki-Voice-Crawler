@@ -10,7 +10,8 @@ INSERT INTO chapter_type (chapter_type_id, chapter_type_name) values
     (2, 'Story'),
     (3, 'Hangout'),
     (4, 'Event'),
-    (5, 'Other')
+    (5, 'Other'),
+    (6, 'Character')
 ;
 
 CREATE TABLE main.chapter(
