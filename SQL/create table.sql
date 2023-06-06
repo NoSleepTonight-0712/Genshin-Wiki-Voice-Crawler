@@ -38,6 +38,7 @@ CREATE TABLE main.dialogue(
     dialogue_audio_url text NOT NULL,
     max_sentence_length int NOT NULL,   -- 最长单句单词数。用于判断长难句的存在。
     dialogue_audio_name text NOT NULL,
+    word_frequency int,
     FOREIGN KEY (dialogue_quest_id)
     REFERENCES quest (quest_id)
 );
@@ -48,3 +49,5 @@ drop TABLE main.quest;
 drop TABLE main.chapter;
 drop TABLE main.dialogue;
 drop TABLE main.chapter_type;
+
+SELECT * FROM dialogue WHERE lower(dialogue_text)
