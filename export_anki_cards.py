@@ -10,8 +10,8 @@ cur = conn.cursor()
 df = pd.read_csv('selected_sentences.csv')
 
 my_deck = genanki.Deck(
-    5432456432423432,
-    'Genshin Words')
+    5432456432423431,
+    'Genshin Words only event')
 
 my_model = genanki.Model(
     657652456445343432,
@@ -54,5 +54,5 @@ for _, (_, sentence_id, word_freq) in df.iterrows():
 my_package = genanki.Package(my_deck)
 my_package.media_files = [os.path.join('voice', aud) for aud in audio_list]
 
-my_package.write_to_file('Genshin Words.apkg')
+my_package.write_to_file('Genshin Words only events.apkg')
 

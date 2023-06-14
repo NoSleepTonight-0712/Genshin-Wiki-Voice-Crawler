@@ -43,11 +43,21 @@ CREATE TABLE main.dialogue(
     REFERENCES quest (quest_id)
 );
 
+-- create only event view
+CREATE VIEW dialogue_only_events AS
+SELECT *
+FROM dialogue
+WHERE dialogue_quest_id IN (
+        SELECT quest_id
+        FROM quest
+        where chapter_id IN (
+                SELECT chapter_id FROM chapter WHERE chapter_type_id <> 6
+            )
+    );
+
 
 -- drop all tables
-drop TABLE main.quest;
-drop TABLE main.chapter;
-drop TABLE main.dialogue;
-drop TABLE main.chapter_type;
-
-SELECT * FROM dialogue WHERE lower(dialogue_text)
+-- drop TABLE main.quest;
+-- drop TABLE main.chapter;
+-- drop TABLE main.dialogue;
+-- drop TABLE main.chapter_type;
