@@ -4,20 +4,41 @@ import random
 import os
 import genanki
 import pathlib
+from typing import Tuple
 
 ###   SETTINGS   ###
 # The final SQL will be the conbination of SQL_HEAD and SQL_CLAUSE.
 # please select dialogue_text, dialogue_audio_name FROM dialogue if you don't want
 # to further modify the code behind.
-SQL_HEAD = 'SELECT dialogue_text, dialogue_audio_name FROM dialogue WHERE'
-SQL_CLAUSE = 'dialogue_quest_id = (SELECT quest_id FROM quest where chapter_id = ?)'
+SQL = 'SELECT dialogue_text, dialogue_audio_name FROM dialogue WHERE \n dialogue_quest_id = (SELECT quest_id FROM quest where chapter_id = ?)'
 SQL_PARAMS = (1,)
 
 EXPORT_DECK_NAME = ''
 
 
-def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, export_dir = '', check=False):
-    # clear export deck name
+def export_cards_by_SQL(sql: str, sql_params: Tuple[str], export_deck_name: str, export_dir = '', check=False) -> None: 
+    """This function is used to export cards by SQL.
+
+    Parameters
+    ----------
+    sql : string
+        The SQL string you want to execute. Use ? to fill the param's blank.
+
+    sql_params : Tuple[str]
+        The SQL params Tuple of the sql string.
+        For example, you may use `SELECT dialogue_text, dialogue_audio_name FROM dialogue WHERE dialogue_text LIKE "?"`,
+        and pass the sql_params as `('%Paimon%, )` to select all dialogues whoes text contain 'Paimon'.
+
+    export_deck_name : str
+        The deck name. Please make it unique.
+
+    export_dir : str
+        The deck destination.
+
+    check : bool, default=False.
+        If check is set to True, it will check the existent of each audio file, but will make the program slower.
+        In most cases, keep it as False. It will automatically enable checking if there are some files missing.
+    """
     export_deck_name = export_deck_name.replace('"', '').replace("'", '').replace(':', '').replace('?', '')
 
     ###  CARD TEMPLATES  ###
@@ -55,8 +76,6 @@ def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, expo
     conn = sqlite3.connect('data/data.sqlite')
     cur = conn.cursor()
 
-    sql = sql_head + ' \n ' + sql_clause
-
     cur.execute(sql, sql_params)
 
     select_result = cur.fetchall()
@@ -84,7 +103,7 @@ def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, expo
     except:
         # maybe some audio file(s) are broken.
         print(f'@@@@@ WARNING: {export_deck_name} may be broken! @@@@@@')
-        export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, export_dir, check=True)
+        export_cards_by_SQL(sql, sql_params, export_deck_name, export_dir, check=True)
 
 
     cur.close()
@@ -93,5 +112,5 @@ def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, expo
 
 
 if __name__ == '__main__':
-    export_cards_by_SQL(SQL_HEAD, SQL_CLAUSE, SQL_PARAMS, EXPORT_DECK_NAME)
+    export_cards_by_SQL(SQL, SQL_PARAMS, EXPORT_DECK_NAME)
 

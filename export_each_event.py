@@ -22,12 +22,11 @@ for chapter_id, chapter_name in chapter_list:
     quest_ids = cur.fetchall()
 
     for (quest_id, quest_name) in quest_ids:
-        SQL_HEAD = 'SELECT DISTINCT dialogue_text, dialogue_audio_name FROM (SELECT * FROM dialogue WHERE'
-        SQL_CLAUSE = 'dialogue_quest_id = ? ORDER BY dialogue_id)'
+        SQL = 'SELECT DISTINCT dialogue_text, dialogue_audio_name FROM (SELECT * FROM dialogue WHERE \n dialogue_quest_id = ? ORDER BY dialogue_id)'
         SQL_PARAMS = (quest_id,)
 
         EXPORT_DECK_NAME = quest_name
 
-        export_cards_by_SQL(SQL_HEAD, SQL_CLAUSE, SQL_PARAMS, EXPORT_DECK_NAME, os.path.join('export', chapter_name))
+        export_cards_by_SQL(SQL, SQL_PARAMS, EXPORT_DECK_NAME, os.path.join('export', chapter_name))
 
 
