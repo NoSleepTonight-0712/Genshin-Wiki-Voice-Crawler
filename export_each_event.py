@@ -1,21 +1,33 @@
 from export_cards_by_SQL import export_cards_by_SQL
 import sqlite3
+import os
+from pathlib import Path
 
 conn = sqlite3.connect('data/data.sqlite')
 cur = conn.cursor()
 
 # get chapter list
-cur.execute('SELECT distinct chapter_id, chapter_name from chapter;')
+cur.execute('SELECT DISTINCT chapter_id, chapter_name from chapter;')
 chapter_list = cur.fetchall()
 
 # export each event
 for chapter_id, chapter_name in chapter_list:
     print(f'processing {chapter_name}')
-    SQL_HEAD = 'SELECT dialogue_text, dialogue_audio_name FROM dialogue WHERE'
-    SQL_CLAUSE = 'dialogue_quest_id = (SELECT quest_id FROM quest where chapter_id = ?)'
-    SQL_PARAMS = (chapter_id,)
+    chapter_name = chapter_name.replace('"', '').replace("'", '').replace(':', '').replace('?', '')
 
-    EXPORT_DECK_NAME = chapter_name
+    if not Path(os.path.join('export', chapter_name)).exists():
+        os.mkdir(os.path.join('export', chapter_name))
 
-    export_cards_by_SQL(SQL_HEAD, SQL_CLAUSE, SQL_PARAMS, EXPORT_DECK_NAME, 'export')
+    cur.execute('SELECT DISTINCT quest_id, quest_name from quest where chapter_id = ?', (chapter_id, ))
+    quest_ids = cur.fetchall()
+
+    for (quest_id, quest_name) in quest_ids:
+        SQL_HEAD = 'SELECT DISTINCT dialogue_text, dialogue_audio_name FROM (SELECT * FROM dialogue WHERE'
+        SQL_CLAUSE = 'dialogue_quest_id = ? ORDER BY dialogue_id)'
+        SQL_PARAMS = (quest_id,)
+
+        EXPORT_DECK_NAME = quest_name
+
+        export_cards_by_SQL(SQL_HEAD, SQL_CLAUSE, SQL_PARAMS, EXPORT_DECK_NAME, os.path.join('export', chapter_name))
+
 

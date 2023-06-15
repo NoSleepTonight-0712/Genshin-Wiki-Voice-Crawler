@@ -16,3 +16,7 @@ def difficulty_analyze(text: str):
         print(text)
 
     return max_sentence_length
+
+
+def isSimpleSentece(sentence_text: str):
+    

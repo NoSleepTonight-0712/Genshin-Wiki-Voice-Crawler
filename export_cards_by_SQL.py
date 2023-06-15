@@ -31,12 +31,13 @@ def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, expo
         "Genshin Sentences",
         fields=[
             {'name': 'Answer'},
-            {'name': 'Media'}
+            {'name': 'Media'},
+            {'name': 'SentenceNumber'}
         ],
         templates=[
             {
                 'name': 'Card 1',
-                'qfmt': '{{Media}}',
+                'qfmt': '<div>Sentence NO. {{SentenceNumber}}</div><div>{{Media}}</div>',
                 'afmt': '{{FrontSide}}<hr id="answer"><span id="answer-text">{{Answer}}</span>'
             }
         ],
@@ -61,23 +62,25 @@ def export_cards_by_SQL(sql_head, sql_clause, sql_params, export_deck_name, expo
     select_result = cur.fetchall()
 
     audio_list = []
-    for text, audio in select_result:
+    for i, (text, audio) in enumerate(select_result):
         if check:
-            if not pathlib.Path(os.path.join('voice', audio)).exists():
+            if not pathlib.Path(audio).exists():
                 continue
+        audio_name = audio.split('\\')[-1]
         note = genanki.Note(
             model=genshin_model,
-            fields=[text, f"[sound:{audio}]"]
+            fields=[text, f"[sound:{audio_name}]", str(i+1)]
         )
         audio_list.append(audio)
         genshin_deck.add_note(note)
 
 
     genshin_package = genanki.Package(genshin_deck)
-    genshin_package.media_files = [os.path.join('voice', aud) for aud in audio_list]
+    genshin_package.media_files = audio_list
 
     try:
         genshin_package.write_to_file(os.path.join(export_dir, f'{export_deck_name}.apkg'))
+        print(f'finish export {export_deck_name}')
     except:
         # maybe some audio file(s) are broken.
         print(f'@@@@@ WARNING: {export_deck_name} may be broken! @@@@@@')

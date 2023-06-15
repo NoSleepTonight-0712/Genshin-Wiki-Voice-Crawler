@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup
 from typing import List, Tuple, Dict
 try:
     from utils.global_variables import *
+    from utils.voice_manager import getDestByFileName
 except:
     from global_variables import *
+    from voice_manager import getDestByFileName
 
 
 class Quest():
@@ -92,6 +94,7 @@ class Quest():
 
             try:
                 audio_name = self.quest_name.replace(' ', '_') + '__' + ([i for i in audio_link.split('/') if i.endswith('.ogg')][0])
+                audio_name = getDestByFileName(audio_name)[1]
             except:
                 return None
         
@@ -105,7 +108,12 @@ class Quest():
 
 
     def extractAllDialogues(self) -> List[Tuple[str, str, str]]:
-        dds = self.dom.find('div', class_='dialogue').find_all('dd')
+        dialogues = self.dom.find_all('div', class_='dialogue')
+        dds = []
+        
+        for d in dialogues:
+            dds.extend(d.find_all('dd'))
+
         result = []
 
         for dd in dds:
@@ -139,8 +147,9 @@ class Quest():
     
 
 if __name__ == '__main__':
-    q = Quest('https://genshin-impact.fandom.com/wiki/A_Soul_Set_Apart')
+    q = Quest('https://genshin-impact.fandom.com/wiki/Fragmented_Testimony')
     result = q.extractAllDialogues()
+    print(result)
    
     
         

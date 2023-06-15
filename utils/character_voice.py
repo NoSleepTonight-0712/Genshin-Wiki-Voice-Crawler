@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from utils.global_variables import BASE_URL
 from urllib.parse import urljoin
 
+
 def getVoiceOverPageByIndexPage(url):
     content = requests.get(url).content
     b = BeautifulSoup(content, features='lxml')

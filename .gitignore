@@ -2,8 +2,11 @@ voice/
 voice1/
 __pycache__/
 .vscode/
+export/
 
 *.ogg
 *.csv
 *.apkg
 test.ipynb
+
+*.zip
