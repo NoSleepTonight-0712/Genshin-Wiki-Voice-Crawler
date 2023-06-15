@@ -3,7 +3,9 @@ voice1/
 __pycache__/
 .vscode/
 export/
+vocabulary_list/
 
+*.ipynb
 *.ogg
 *.csv
 *.apkg
