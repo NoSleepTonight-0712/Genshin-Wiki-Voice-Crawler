@@ -1,3 +1,6 @@
+## Version log
+Updated 3.8 events (2023-07-09)
+
 ## Genshin Wiki Voice Crawler
 This repo is used for crawling the Genshin fandom wiki to archieve all the voice (only English) in the game Genshin Impact.  
 It will collect voices from Events and Character Voice, and store them to an SQLite database.  
