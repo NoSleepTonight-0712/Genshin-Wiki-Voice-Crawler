@@ -8,6 +8,8 @@ It can also export these voice to an Anki card desk for English learning.
 支持导出为Anki卡组。
 
 
+
+
 ## 执行顺序  Process
 
 ### 建表  Create the table

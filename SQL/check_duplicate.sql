@@ -6,6 +6,7 @@ SELECT * from dialogue where dialogue_quest_id = (select quest_id from quest whe
 
 SELECT * from quest WHERE chapter_id = 61;
 
+
 SELECT DISTINCT * from chapter;
 
 SELECT count(*) from dialogue;
