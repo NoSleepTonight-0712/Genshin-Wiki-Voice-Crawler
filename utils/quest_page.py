@@ -99,7 +99,7 @@ class Quest():
                 return None
         
         # extract text
-        for i in dialogue_record.find_all('span'):
+        for i in dialogue_record.find_all('span', class_='audio-button'):
             i.clear()
 
         audio_text = dialogue_record.text.strip()
